@@ -74,7 +74,7 @@ static void main(mxprops::PTree::ConstRef const& props)
   cv::Mat blurred_img;
   cv::GaussianBlur(src, blurred_img, cv::Size(0, 0), img_blur_radius, img_blur_radius);
 
-  int mean_filter_size;
+  // int mean_filter_size;
   int sobel_size;
   std::string window_shape;
   bool is_centric;
@@ -82,20 +82,20 @@ static void main(mxprops::PTree::ConstRef const& props)
   float drawing_scale;
   std::string output_image_path;
 
+  // mean_filter_size = props.get<int>("alg_params.mean_filter_size", 40);
   sobel_size = props.get<int>("alg_params.sobel_size", 3);
-  mean_filter_size = props.get<int>("alg_params.mean_filter_size", 40);
   window_shape = props.get<std::string>("alg_params.window_shape", "BOX");
   is_centric = props.get<bool>("alg_params.is_centric", false);
   drawing_step = props.get<int>("alg_params.drawing_step", 20);
   drawing_scale = props.get<float>("alg_params.drawing_scale", 0.003);
-
-  output_image_path = props.get<std::string>("output_image_path");
+// 
+  // output_image_path = props.get<std::string>("output_image_path");
 
   //computation
-  // cv::Size mean_filter_size(blurred_img.cols, blurred_img.rows);
+  cv::Size mean_filter_size(blurred_img.cols, blurred_img.rows);
   cv::Mat st_tensors = structure_tensors(blurred_img,
     sobel_size,
-    cv::Size(mean_filter_size, mean_filter_size),//mean_filter_size,
+    mean_filter_size,
     window_shape,
     is_centric,
     drawing_step,
@@ -115,7 +115,7 @@ static void main(mxprops::PTree::ConstRef const& props)
     drawing_scale/*,
     mean_filter_size*/);
 
-  cv::imwrite(output_image_path + "structure_tensors.jpg", img_with_eigen_vectors);
+  // cv::imwrite(output_image_path + "structure_tensors.jpg", img_with_eigen_vectors);
   
   //compute another characteristics
   //mean, standard deviation, min_intensity, max_intensity
@@ -141,23 +141,23 @@ static void main(mxprops::PTree::ConstRef const& props)
             << /*mean.at<float>(0,0)*/ mean << " "
             << /*stddev.at<float>(0,0)*/ stand_dev << std::endl;
 
-  // weird version
-  int wierd_mean_filter_size = 40;
-  cv::Mat weird_st_tensors = weird_structure_tensors(src, wierd_mean_filter_size);
+  // // weird version
+  // int wierd_mean_filter_size = 40;
+  // cv::Mat weird_st_tensors = weird_structure_tensors(src, wierd_mean_filter_size);
 
-  //visualization of weird version
-  cv::Mat weird_eigens(weird_st_tensors.rows, weird_st_tensors.cols, CV_32FC2, cv::Scalar(0, 0));
-  cv::Mat img_max_weird_eigen_vectors(weird_st_tensors.rows, weird_st_tensors.cols, CV_32FC2, cv::Scalar(0, 0));
-  cv::Mat img_min_weird_eigen_vectors(weird_st_tensors.rows, weird_st_tensors.cols, CV_32FC2, cv::Scalar(0, 0));
-  compute_eigen_values(weird_st_tensors, weird_eigens, img_max_weird_eigen_vectors, img_min_weird_eigen_vectors);
+  // //visualization of weird version
+  // cv::Mat weird_eigens(weird_st_tensors.rows, weird_st_tensors.cols, CV_32FC2, cv::Scalar(0, 0));
+  // cv::Mat img_max_weird_eigen_vectors(weird_st_tensors.rows, weird_st_tensors.cols, CV_32FC2, cv::Scalar(0, 0));
+  // cv::Mat img_min_weird_eigen_vectors(weird_st_tensors.rows, weird_st_tensors.cols, CV_32FC2, cv::Scalar(0, 0));
+  // compute_eigen_values(weird_st_tensors, weird_eigens, img_max_weird_eigen_vectors, img_min_weird_eigen_vectors);
 
-  cv::Mat img_with_weird_eigen_vectors = draw_eigen_vectors(src,
-    weird_eigens, 
-    img_max_weird_eigen_vectors,
-    img_min_weird_eigen_vectors,
-    drawing_step,
-    drawing_scale/*,
-    mean_filter_size*/);
+  // cv::Mat img_with_weird_eigen_vectors = draw_eigen_vectors(src,
+  //   weird_eigens, 
+  //   img_max_weird_eigen_vectors,
+  //   img_min_weird_eigen_vectors,
+  //   drawing_step,
+  //   drawing_scale/*,
+  //   mean_filter_size*/);
 
   // cv::imwrite(output_image_path + "weird_structure_tensors.jpg", img_with_weird_eigen_vectors);
 
